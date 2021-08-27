@@ -1,29 +1,40 @@
 {
-  "name": "stfile2",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build"
-  },
-  "dependencies": {
-    "core-js": "^3.6.5",
-    "register-service-worker": "^1.7.1",
-    "vue": "^2.6.11",
-    "vue-router": "^3.2.0",
-    "vuex": "^3.4.0"
-  },
-  "devDependencies": {
-    "@vue/cli-plugin-babel": "~4.5.0",
-    "@vue/cli-plugin-pwa": "~4.5.0",
-    "@vue/cli-plugin-router": "~4.5.0",
-    "@vue/cli-plugin-vuex": "~4.5.0",
-    "@vue/cli-service": "~4.5.0",
-    "vue-template-compiler": "^2.6.11"
-  },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not dead"
-  ]
+	"name": "stfile2",
+  	"version": "0.1.0",
+  	"private": true,
+  	"scripts": {
+    	"serve": "vue-cli-service serve",
+    	"build": "vue-cli-service build --modern",
+    	"prod": "powershell Remove-Item //gisags2v/c$/inetpub/wwwroot/stfile/* -Recurse -Force && powershell Copy-Item –Path dist/* –Destination //gisags2v/c$/inetpub/wwwroot/stfile -Recurse -Force",
+    	"dev": "powershell Remove-Item //gispolarisdev1v/c$/inetpub/wwwroot/stfile/* -Recurse -Force && powershell Copy-Item –Path dist/* –Destination //gispolarisdev1v/c$/inetpub/wwwroot/stfile -Recurse -Force",
+    	"dev2": "powershell Remove-Item C://www/stf/* -Recurse -Force && powershell Copy-Item –Path dist/* –Destination C://www/stf -Recurse -Force",
+    	"zip": "powershell Remove-Item stfile_bundle.zip -Recurse -Force && powershell Compress-Archive -Path dist/* -DestinationPath stfile_bundle.zip",
+    	"copy": "powershell Copy-Item –Path stfile_bundle.zip –Destination //gispolarisdev1v/c$/temp",
+    	"publish": "npm run zip && npm run copy"
+  	},
+  	"dependencies": {
+    	"@arcgis/core": "^4.19.3",
+    	"@mdi/font": "^5.9.55",
+    	"axios": "^0.21.1",
+    	"core-js": "^3.6.5",
+    	"fontsource-roboto": "^4.0.0",
+    	"register-service-worker": "^1.7.1",
+		"vue": "^2.6.11",
+		"vue-router": "^3.2.0",
+		"vuelidate": "^0.7.6",
+		"vuetify": "^2.4.0",
+		"vuex": "^3.4.0"
+  	},
+  	"devDependencies": {
+		"@vue/cli-plugin-babel": "~4.5.0",
+		"@vue/cli-plugin-pwa": "~4.5.0",
+		"@vue/cli-plugin-router": "~4.5.0",
+		"@vue/cli-plugin-vuex": "~4.5.0",
+		"@vue/cli-service": "~4.5.0",
+		"sass": "~1.32.0",
+		"sass-loader": "^10.0.0",
+		"vue-cli-plugin-vuetify": "~2.4.2",
+		"vue-template-compiler": "^2.6.11",
+		"vuetify-loader": "^1.7.0"
+  	}
 }

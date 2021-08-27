@@ -1,0 +1,4 @@
+<FilesMatch "service-worker.js">
+	Header set Cache-Control "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0"
+	ExpiresDefault "now"
+</FilesMatch>
