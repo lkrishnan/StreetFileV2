@@ -5,21 +5,22 @@
 </template>
 
 <script>
-    import Map from "@arcgis/core/Map";
-    import MapView from '@arcgis/core/views/MapView';
-    import FeatureLayer from "@arcgis/core/layers/FeatureLayer";
-    import GraphicsLayer from "@arcgis/core/layers/GraphicsLayer";
-    import TileLayer from "@arcgis/core/layers/TileLayer";
-    import Extent from "@arcgis/core/geometry/Extent";
-    import esriConfig from '@arcgis/core/config.js';
-    import axios from "axios";
+    import Map from "@arcgis/core/Map"
+    import MapView from "@arcgis/core/views/MapView"
+    import FeatureLayer from "@arcgis/core/layers/FeatureLayer"
+    import GraphicsLayer from "@arcgis/core/layers/GraphicsLayer"
+    import TileLayer from "@arcgis/core/layers/TileLayer"
+    import MapImageLayer from "@arcgis/core/layers/MapImageLayer"
+    import Extent from "@arcgis/core/geometry/Extent"
+    import esriConfig from "@arcgis/core/config.js"
+    import axios from "axios"
 
-    esriConfig.assetsPath = './assets';
+    esriConfig.assetsPath = './assets'
 
     export default {
         name: "themap",
         mounted: function( ){
-            this.initMap( );
+            this.initMap( )
 
         },
         data:  ( ) => ( {
@@ -39,14 +40,28 @@
                     outFields: [ "num_addr", "county_street_code" ],
                     visible: false 
                 } ),
-            sel_layer: new GraphicsLayer( { opacity: 0.6 } )
+            sel_layer: new GraphicsLayer( { opacity: 0.6 } ),
+            addr_map_layer: new MapImageLayer( {
+                url: "https://maps.mecklenburgcountync.gov/agsadaptor/rest/services/ADM/streetfile_layers/MapServer",
+                sublayers: [
+                    {
+                        id: 0,
+                        visible: true
+                    }
+                
+                ]
+            
+            } )
+        
         } ),
         computed: {
             ws( ){
-                return this.$store.state.ws;
+                return this.$store.state.ws
+            
             },
             stcode( ){
-                return this.$store.state.stcode;
+                return this.$route.params.stcode			
+
             }
             
         },
@@ -59,7 +74,7 @@
                 const _this = this;
                     
                 _this.map = new Map( {
-                    layers: [ _this.basemap, _this.road_layer, _this.addr_layer, _this.sel_layer ] 
+                    layers: [ _this.basemap, _this.addr_map_layer, _this.road_layer, _this.addr_layer, _this.sel_layer ] 
                 } );
 
                 _this.map_view = new MapView( {
@@ -72,30 +87,33 @@
 		                ymax: 660946.333333335,
 		                spatialReference: { wkid: 2264 }
 	                } ) 
-		        } );
+		        } )
+
+                 _this.map_view.ui.remove( "attribution" )
 
                 if( _this.stcode ){
-                    _this.selectFeatures( );
+                    _this.selectFeatures( )
                 }
 
             },
             selectFeatures( ){
-                const _this = this;
+                const _this = this
 
                 axios.all( [ 
 					_this.road_layer.when( ( ) => {
-                        var query = _this.road_layer.createQuery( );
-                        query.where = "lstreetcode = " + _this.stcode + " or rstreetcode = " + _this.stcode;
-                        return _this.road_layer.queryFeatures( query );
+                        var query = _this.road_layer.createQuery( )
+                        query.where = "lstreetcode = " + _this.stcode + " or rstreetcode = " + _this.stcode
+                        return _this.road_layer.queryFeatures( query )
                     } ),
                     _this.addr_layer.when( ( ) => {
-                        var query = _this.addr_layer.createQuery( );
-                        query.where = "county_street_code = " + _this.stcode;
-                        return _this.addr_layer.queryFeatures( query );
+                        var query = _this.addr_layer.createQuery( )
+                        query.where = "county_street_code = " + _this.stcode
+                        return _this.addr_layer.queryFeatures( query )
+
                     } )
 				] )
 				.then( axios.spread( ( road_results, addr_results ) => {
-                    let features = [ ];
+                    let features = [ ]
 
 					const road_features = road_results.features.map( function( graphic ){
                             graphic.symbol = {
@@ -103,7 +121,7 @@
                                 color: [ 47, 204, 110 ] , // RGB color values as an array
                                 width: 4
                             };
-                            return graphic;
+                            return graphic
 
                         } ),
                         addr_features = addr_results.features.map( function( graphic ){
@@ -116,21 +134,21 @@
                                     color: [ 47, 204, 110 ]
                                 }
                             };
-                            return graphic;
+                            return graphic
 
                         } ); 
 
-                    features.push( ...road_features, ...addr_features );
+                    features.push( ...road_features, ...addr_features )
 
-                    _this.sel_layer.removeAll( );
-                    _this.sel_layer.addMany( features );
-                    _this.map_view.goTo( features );
+                    _this.sel_layer.removeAll( )
+                    _this.sel_layer.addMany( features )
+                    _this.map_view.goTo( features )
             
         		} ) )
         		.catch( ex => {
-          			console.log( "parsing failed", ex );
+          			console.log( "parsing failed", ex )
 
-        		} );
+        		} )
             
             }
 		    
