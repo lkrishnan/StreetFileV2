@@ -1,6 +1,26 @@
 <template>
     <v-card class="my-5">
-        <div id="map"></div>
+        <div id="map">
+            <div id="loading">
+                <v-card 
+                    class="pa-5" 
+                    top   
+                    right
+                    absolute
+                >
+                fsdfsd
+			    </v-card>
+            </div>
+            <v-progress-linear
+                v-show="!hidden"
+                indeterminate
+                color="primary"
+                height="10"
+                bottom
+                left
+                absolute
+            ></v-progress-linear>
+        </div>
     </v-card>
 </template>
 
@@ -14,6 +34,8 @@
     import Extent from "@arcgis/core/geometry/Extent"
     import esriConfig from "@arcgis/core/config.js"
     import axios from "axios"
+    import JSONToURL from "../js/jsontourl"
+    //import * as watchUtils from "@arcgis/core/core/watchUtils"
 
     esriConfig.assetsPath = './assets'
 
@@ -24,18 +46,27 @@
 
         },
         data:  ( ) => ( {
+            axios_inst: axios.create( { 
+				headers: { 
+					"Cache-Control": "max-age=0, no-cache, no-store",
+					"Pragma": "no-cache"  
+				}
+			} ),
             map: null,
             map_view: null,
+            popup: null,
             road_layer_view: null,
             basemap: new TileLayer( { 
                     url: "https://maps.mecklenburgcountync.gov/agsadaptor/rest/services/basemap/MapServer" 
                 } ),
             road_layer: new FeatureLayer( { 
+                    id: "st_lyr",
                     url: "https://maps.mecklenburgcountync.gov/agsadaptor/rest/services/ADM/streetfile_layers/FeatureServer/1", 
                     outFields: [ "e911", "lstreetcode", "rstreetcode" ],
                     visible: false
                 } ),
-            addr_layer: new FeatureLayer( { 
+            addr_layer: new FeatureLayer( {
+                    id: "addr_lyr", 
                     url: "https://maps.mecklenburgcountync.gov/agsadaptor/rest/services/ADM/streetfile_layers/FeatureServer/0",
                     outFields: [ "num_addr", "county_street_code" ],
                     visible: false 
@@ -51,7 +82,16 @@
                 
                 ]
             
-            } )
+            } ),
+            hidden: true,
+            select: { state: 'Florida', abbr: 'FL' },
+            items: [
+                { state: 'Florida', abbr: 'FL' },
+                { state: 'Georgia', abbr: 'GA' },
+                { state: 'Nebraska', abbr: 'NE' },
+                { state: 'California', abbr: 'CA' },
+                { state: 'New York', abbr: 'NY' },
+            ]
         
         } ),
         computed: {
@@ -66,7 +106,7 @@
             
         },
         watch: {
-            stcode: "selectFeatures"
+            stcode: "highlightFeatures"
         
         },
         methods: {
@@ -75,7 +115,8 @@
                     
                 _this.map = new Map( {
                     layers: [ _this.basemap, _this.addr_map_layer, _this.road_layer, _this.addr_layer, _this.sel_layer ] 
-                } );
+                
+                } )
 
                 _this.map_view = new MapView( {
                     container: "map",
@@ -86,17 +127,50 @@
 		                xmax: 1537013.50075424,
 		                ymax: 660946.333333335,
 		                spatialReference: { wkid: 2264 }
-	                } ) 
-		        } )
+	                } ),
+                    popup: {
+                        defaultPopupTemplateEnabled: false,
+                        includeDefaultActions: false,
+                        dockEnabled: true,
+                        dockOptions: {
+                            buttonEnabled: false,
+                            breakpoint: false,
+                            position: "top-right"
+                        }
 
-                 _this.map_view.ui.remove( "attribution" )
+                    } 
+		        
+                } )
+
+                _this.popup = _this.map_view.popup
+                _this.popup.visibleElements = {
+                    closeButton: false
+                
+                }
+
+                _this.map_view.ui.remove( "attribution" )
+                _this.map_view.on( "click", _this.mapSearch )
+
+                // Display the loading indicator when the view is updating
+                //watchUtils.whenTrue( _this.map_view, "updating", function( evt ){
+                //    _this.hidden = false
+                
+                //} )
+
+                // Hide the loading indicator when the view stops updating
+                //watchUtils.whenFalse( _this.map_view, "updating", function( evt ){
+                //    _this.hidden = true
+                
+                //} )
 
                 if( _this.stcode ){
-                    _this.selectFeatures( )
+                    _this.highlightFeatures( )
+                
                 }
 
             },
-            selectFeatures( ){
+
+            highlightFeatures( ){
                 const _this = this
 
                 axios.all( [ 
@@ -111,6 +185,7 @@
                         return _this.addr_layer.queryFeatures( query )
 
                     } )
+
 				] )
 				.then( axios.spread( ( road_results, addr_results ) => {
                     let features = [ ]
@@ -143,6 +218,7 @@
                     _this.sel_layer.removeAll( )
                     _this.sel_layer.addMany( features )
                     _this.map_view.goTo( features )
+                    _this.hidden = true
             
         		} ) )
         		.catch( ex => {
@@ -150,6 +226,45 @@
 
         		} )
             
+            },
+
+            mapSearch( event ){
+                const _this = this,
+                    url = _this.ws.gis + "v1/intersect_point/streets_ln/" + event.mapPoint.x + "," + event.mapPoint.y + ",2264",
+					params = {
+            			columns: "lstreetcode, rstreetcode",
+                        geom_column: "shape",
+                        distance: "50"
+			    	}
+
+                
+                _this.hidden = false
+                _this.axios_inst.get( `${ url }?${ JSONToURL( params ) }` )
+                    .then( function( response ){
+                        return response.data
+
+                    } )
+                    .then( streets_data => { 
+                        if( streets_data.length > 0 ){
+                            _this.popup.open( {
+                                title: "Popup dock positions",
+                                content: "Use the control in the center of the map to change the location where the popup will dock."
+                            } )
+                            //push URL hash
+                            _this.$router.push( { name: "Detail", params: { stcode: streets_data[ 0 ].lstreetcode } } )
+
+                            
+
+                        }
+                                        
+                    } )
+                    .catch( thrown => {
+                        console.log( "parsing failed", thrown )
+                        _this.hidden = !_this.hidden
+                
+                    } )
+
+
             }
 		    
 	    }
@@ -162,6 +277,13 @@
         padding: 0;
         margin: 0;
         height: 600px;
+    }
+
+    #loading {
+        margin: 0;
+        position: absolute;
+        top: 20px;
+        right: 20px;
     }
 
 </style>
