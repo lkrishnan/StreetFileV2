@@ -35,6 +35,10 @@
     import esriConfig from "@arcgis/core/config.js"
     import axios from "axios"
     import JSONToURL from "../js/jsontourl"
+    import GetLineGeomFromPostGIS from "../js/getLineGeomFromPostGIS"
+    import GetAddrGraphics from "../js/getAddrGraphics"
+    import GetRoadGraphics from "../js/getRoadGraphics"
+    import Graphic from "@arcgis/core/Graphic"
     //import * as watchUtils from "@arcgis/core/core/watchUtils"
 
     esriConfig.assetsPath = './assets'
@@ -170,7 +174,19 @@
 
             },
 
-            highlightFeatures( ){
+            async highlightFeatures( ){
+                const _this = this,
+                    grphs = [ ...await GetAddrGraphics( _this.stcode, ...await GetRoadGraphics( _this.stcode ) ) ]
+                
+                _this.sel_layer.removeAll( )
+                _this.sel_layer.addMany( grphs )
+                
+                _this.map_view.goTo( grphs )
+                _this.hidden = true
+
+            },
+
+            /*highlightFeatures( ){
                 const _this = this
 
                 axios.all( [ 
@@ -226,7 +242,7 @@
 
         		} )
             
-            },
+            },*/
 
             mapSearch( event ){
                 const _this = this,

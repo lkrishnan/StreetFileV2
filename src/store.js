@@ -30,7 +30,11 @@ export default new Vuex.Store( {
 				"legal": [ ], 
 				"alias": [ ] 
 			},
-		token: ""
+		token: "",
+		ws: {
+			adm: "https://maps.mecklenburgcountync.gov/api/adm/",
+			gis: "https://maps.mecklenburgcountync.gov/api/gis/"
+	  	}
   
 	},
 	getters: {
