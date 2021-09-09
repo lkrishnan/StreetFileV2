@@ -21,61 +21,37 @@ export default async function getRoadGraphics( stcode ){
             }
 		
 		},
-        getPaths = ( geomtxt ) => {
+        getPath = ( geomtxt ) => {
             return geomtxt
-                .replace( /multilinestring|linestring|\)|\(/ig, '' )
-                .trim( )
-                .replace( /,\s|,/g, '!' )
-                .replace( /\s/g, ',' )
-                .split( '!' )
-
+                    .replace( /multilinestring|linestring|\)|\(/ig, '' )
+                    .trim( )
+                    .split( ',' )
+                    .map( coord => {
+                        return coord.split( " " ).map( Number )
+        
+                    } )
         },
 		response = await axios_inst.get( `${ url }?${ JSONToURL( getParams( stcode ) ) }` ),
-        grphs = [ ]
-        /*grphs = response.data.map( segment => {
-            return new Graphic( {
-                geometry: {
-                        type: "polyline",
-                        paths: getPaths( segment.geom ),
-                        spatialReference: { wkid: 2264 }
+        paths = response.data.map( raw_path => { 
+            return getPath( raw_path.geom )
 
-                    },
-                symbol: {
-                        type: "simple-line", // autocasts as new SimpleLineSymbol()
-                        color: [ 47, 204, 110 ] , // RGB color values as an array
-                        width: 4
-                    
-                    },
-                attributes: {
-                        Name: "Keystone Pipeline",
-                        Owner: "TransCanada",
-                        Length: "3,456 km"
-                    },
-                popupTemplate: {
-                    // autocasts as new PopupTemplate()
-                    title: "{Name}",
-                    content: [
-                        {
-                            type: "fields",
-                            fieldInfos: [
-                                {
-                                fieldName: "Name"
-                                },
-                                {
-                                    fieldName: "Owner"
-                                },
-                                {
-                                    fieldName: "Length"
-                                }
-                            ]
-                        }
-                    ]
-                }
+        } ),
+        grph = new Graphic( {
+            geometry: {
+                type: "polyline",
+                paths: paths,
+                spatialReference: { wkid: 2264 }
 
-            } )
+            },
+            symbol: {
+                type: "simple-line", // autocasts as new SimpleLineSymbol()
+                color: [ 47, 204, 110 ] , // RGB color values as an array
+                width: 4
 
-        } )*/
+            }
 
-    return grphs
+        } ) 
+
+    return grph
 
 }

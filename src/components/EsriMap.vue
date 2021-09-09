@@ -35,7 +35,6 @@
     import esriConfig from "@arcgis/core/config.js"
     import axios from "axios"
     import JSONToURL from "../js/jsontourl"
-    import GetLineGeomFromPostGIS from "../js/getLineGeomFromPostGIS"
     import GetAddrGraphics from "../js/getAddrGraphics"
     import GetRoadGraphics from "../js/getRoadGraphics"
     import Graphic from "@arcgis/core/Graphic"
@@ -62,18 +61,6 @@
             road_layer_view: null,
             basemap: new TileLayer( { 
                     url: "https://maps.mecklenburgcountync.gov/agsadaptor/rest/services/basemap/MapServer" 
-                } ),
-            road_layer: new FeatureLayer( { 
-                    id: "st_lyr",
-                    url: "https://maps.mecklenburgcountync.gov/agsadaptor/rest/services/ADM/streetfile_layers/FeatureServer/1", 
-                    outFields: [ "e911", "lstreetcode", "rstreetcode" ],
-                    visible: false
-                } ),
-            addr_layer: new FeatureLayer( {
-                    id: "addr_lyr", 
-                    url: "https://maps.mecklenburgcountync.gov/agsadaptor/rest/services/ADM/streetfile_layers/FeatureServer/0",
-                    outFields: [ "num_addr", "county_street_code" ],
-                    visible: false 
                 } ),
             sel_layer: new GraphicsLayer( { opacity: 0.6 } ),
             addr_map_layer: new MapImageLayer( {
@@ -118,7 +105,7 @@
                 const _this = this;
                     
                 _this.map = new Map( {
-                    layers: [ _this.basemap, _this.addr_map_layer, _this.road_layer, _this.addr_layer, _this.sel_layer ] 
+                    layers: [ _this.basemap, _this.addr_map_layer, _this.sel_layer ] 
                 
                 } )
 
@@ -176,8 +163,8 @@
 
             async highlightFeatures( ){
                 const _this = this,
-                    grphs = [ ...await GetAddrGraphics( _this.stcode, ...await GetRoadGraphics( _this.stcode ) ) ]
-                
+                    grphs = [ ...await GetAddrGraphics( _this.stcode ), await GetRoadGraphics( _this.stcode ) ]
+
                 _this.sel_layer.removeAll( )
                 _this.sel_layer.addMany( grphs )
                 
