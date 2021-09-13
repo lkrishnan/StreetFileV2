@@ -1,15 +1,23 @@
 <template>
     <v-card class="my-5">
         <div id="map">
-            <div id="loading">
-                <v-card 
-                    class="pa-5" 
-                    top   
-                    right
-                    absolute
-                >
-                fsdfsd
-			    </v-card>
+            <div id="top_right" v-show="!top_right_hidden">
+                
+                        <v-card 
+                            class="pa-5 ml-5" 
+                            top   
+                            right
+                            absolute
+                        >
+                            <v-select
+                                v-model="stcode_selection"
+                                :items="streetcodes"
+                                menu-props="auto"
+                                label="Select Street Name"
+                                single-line>
+                            </v-select>
+                        </v-card>
+                
             </div>
             <v-progress-linear
                 v-show="!hidden"
@@ -55,7 +63,7 @@
 					"Pragma": "no-cache"  
 				}
 			} ),
-            map: null,
+			map: null,
             map_view: null,
             popup: null,
             road_layer_view: null,
@@ -75,6 +83,7 @@
             
             } ),
             hidden: true,
+            top_right_hidden: true,
             select: { state: 'Florida', abbr: 'FL' },
             items: [
                 { state: 'Florida', abbr: 'FL' },
@@ -82,7 +91,8 @@
                 { state: 'Nebraska', abbr: 'NE' },
                 { state: 'California', abbr: 'CA' },
                 { state: 'New York', abbr: 'NY' },
-            ]
+            ],
+            streetcodes: [ ]
         
         } ),
         computed: {
@@ -93,7 +103,19 @@
             stcode( ){
                 return this.$route.params.stcode			
 
-            }
+            },
+            stcode_selection: {
+				set( stcode_selection ){
+                    console.log( "here" )
+					this.$router.push( { name: "Detail", params: { stcode: stcode_selection } } )
+					
+				},
+      			get( ){
+					return this.$route.params.stcode
+      			
+				}
+
+			}
             
         },
         watch: {
@@ -118,41 +140,12 @@
 		                xmax: 1537013.50075424,
 		                ymax: 660946.333333335,
 		                spatialReference: { wkid: 2264 }
-	                } ),
-                    popup: {
-                        defaultPopupTemplateEnabled: false,
-                        includeDefaultActions: false,
-                        dockEnabled: true,
-                        dockOptions: {
-                            buttonEnabled: false,
-                            breakpoint: false,
-                            position: "top-right"
-                        }
-
-                    } 
-		        
+	                } )
+                    		        
                 } )
-
-                _this.popup = _this.map_view.popup
-                _this.popup.visibleElements = {
-                    closeButton: false
-                
-                }
 
                 _this.map_view.ui.remove( "attribution" )
                 _this.map_view.on( "click", _this.mapSearch )
-
-                // Display the loading indicator when the view is updating
-                //watchUtils.whenTrue( _this.map_view, "updating", function( evt ){
-                //    _this.hidden = false
-                
-                //} )
-
-                // Hide the loading indicator when the view stops updating
-                //watchUtils.whenFalse( _this.map_view, "updating", function( evt ){
-                //    _this.hidden = true
-                
-                //} )
 
                 if( _this.stcode ){
                     _this.highlightFeatures( )
@@ -169,67 +162,8 @@
                 _this.sel_layer.addMany( grphs )
                 
                 _this.map_view.goTo( grphs )
-                _this.hidden = true
-
+                
             },
-
-            /*highlightFeatures( ){
-                const _this = this
-
-                axios.all( [ 
-					_this.road_layer.when( ( ) => {
-                        var query = _this.road_layer.createQuery( )
-                        query.where = "lstreetcode = " + _this.stcode + " or rstreetcode = " + _this.stcode
-                        return _this.road_layer.queryFeatures( query )
-                    } ),
-                    _this.addr_layer.when( ( ) => {
-                        var query = _this.addr_layer.createQuery( )
-                        query.where = "county_street_code = " + _this.stcode
-                        return _this.addr_layer.queryFeatures( query )
-
-                    } )
-
-				] )
-				.then( axios.spread( ( road_results, addr_results ) => {
-                    let features = [ ]
-
-					const road_features = road_results.features.map( function( graphic ){
-                            graphic.symbol = {
-                                type: "simple-line", // autocasts as new SimpleLineSymbol()
-                                color: [ 47, 204, 110 ] , // RGB color values as an array
-                                width: 4
-                            };
-                            return graphic
-
-                        } ),
-                        addr_features = addr_results.features.map( function( graphic ){
-                            graphic.symbol = {
-                                type: "simple-marker", // autocasts as new SimpleLineSymbol()
-                                color: [ 47, 204, 110 ], // RGB color values as an array
-                                size: 5,
-                                outline: {  // autocasts as new SimpleLineSymbol()
-                                    width: 1,
-                                    color: [ 47, 204, 110 ]
-                                }
-                            };
-                            return graphic
-
-                        } ); 
-
-                    features.push( ...road_features, ...addr_features )
-
-                    _this.sel_layer.removeAll( )
-                    _this.sel_layer.addMany( features )
-                    _this.map_view.goTo( features )
-                    _this.hidden = true
-            
-        		} ) )
-        		.catch( ex => {
-          			console.log( "parsing failed", ex )
-
-        		} )
-            
-            },*/
 
             mapSearch( event ){
                 const _this = this,
@@ -239,24 +173,51 @@
                         geom_column: "shape",
                         distance: "50"
 			    	}
-
-                
+                                    
                 _this.hidden = false
                 _this.axios_inst.get( `${ url }?${ JSONToURL( params ) }` )
                     .then( function( response ){
                         return response.data
 
                     } )
-                    .then( streets_data => { 
-                        if( streets_data.length > 0 ){
-                            _this.popup.open( {
-                                title: "Popup dock positions",
-                                content: "Use the control in the center of the map to change the location where the popup will dock."
-                            } )
-                            //push URL hash
-                            _this.$router.push( { name: "Detail", params: { stcode: streets_data[ 0 ].lstreetcode } } )
+                    .then( streets_data => {
+                        _this.hidden = true
 
-                            
+                        if( streets_data.length > 0 ){
+                            if( streets_data[ 0 ].lstreetcode != streets_data[ 0 ].rstreetcode ){
+                                const streetfile_url = _this.ws.gis + "v1/query/streetfile_tb",
+					                streetfile_params = {
+            			                columns: "admkey, countystcode",
+                                        filter: "countystcode in ('" + streets_data[ 0 ].lstreetcode + "', '" + streets_data[ 0 ].rstreetcode + "' )"
+			    	                }
+
+                                _this.axios_inst.get( `${ streetfile_url }?${ JSONToURL( streetfile_params ) }` )
+                                    .then( function( response ){
+                                        return response.data
+
+                                    } )
+                                    .then( streetfile_data => {
+                                        _this.streetcodes = streetfile_data.map( row => {
+                                            return { value: row.countystcode, text: row.admkey }
+
+                                        } )
+                                        
+                                        _this.top_right_hidden = false
+
+                                    } )
+                                    .catch( thrown => {
+                                        console.log( "parsing failed", thrown )
+                                        _this.hidden = !_this.hidden
+                
+                                    } ) 
+                                
+                            }else{
+                                _this.top_right_hidden = true
+
+                                //push URL hash
+                                _this.$router.push( { name: "Detail", params: { stcode: streets_data[ 0 ].lstreetcode } } )
+
+                            }
 
                         }
                                         
@@ -266,7 +227,6 @@
                         _this.hidden = !_this.hidden
                 
                     } )
-
 
             }
 		    
@@ -282,7 +242,7 @@
         height: 600px;
     }
 
-    #loading {
+    #top_right {
         margin: 0;
         position: absolute;
         top: 20px;
