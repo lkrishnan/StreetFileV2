@@ -5,12 +5,17 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build --modern",
+    "copydev3": "cpx ./dist/** ../../test/stfile -u",
+    "copydev2": "copyfiles ./dist/**/*.* ../../test/stfile",
+    "copydev": "ncp ./dist //gispolarisdev1v/c$/inetpub/wwwroot/stfile --filter=[a-zA-Z].[a-zA-Z]",
+    "dev3": "powershell Remove-Item //gispolarisdev1v/c$/inetpub/wwwroot/stfile/* -Recurse -Force",
     "prod": "powershell Remove-Item //gisags2v/c$/inetpub/wwwroot/stfile/* -Recurse -Force && powershell Copy-Item –Path dist/* –Destination //gisags2v/c$/inetpub/wwwroot/stfile -Recurse -Force",
-    "dev": "powershell Remove-Item //gispolarisdev1v/c$/inetpub/wwwroot/stfile/* -Recurse -Force && powershell Copy-Item –Path dist/* –Destination //gispolarisdev1v/c$/inetpub/wwwroot/stfile -Recurse -Force",
+    "dev": "powershell Remove-Item //gispolarisdev1v/c$/inetpub/wwwroot/stfile/* -Recurse -Force && powershell Copy-Item -Exclude dist/assets/* –Path dist/* –Destination //gispolarisdev1v/c$/inetpub/wwwroot/stfile -Recurse -Force",
     "dev2": "powershell Remove-Item C://www/stf/* -Recurse -Force && powershell Copy-Item –Path dist/* –Destination C://www/stf -Recurse -Force",
+    "zipnodelete": "powershell Compress-Archive -Path dist/* -DestinationPath stfile_bundle.zip",
     "zip": "powershell Remove-Item stfile_bundle.zip -Recurse -Force && powershell Compress-Archive -Path dist/* -DestinationPath stfile_bundle.zip",
     "copy": "powershell Copy-Item –Path stfile_bundle.zip –Destination //gispolarisdev1v/c$/temp",
-    "publish": "npm run zip && npm run copy"
+    "publish": "npm run build && npm run zip && npm run copy"
   },
   "dependencies": {
     "@arcgis/core": "^4.19.3",
@@ -31,6 +36,9 @@
     "@vue/cli-plugin-router": "~4.5.0",
     "@vue/cli-plugin-vuex": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
+    "copyfiles": "^2.4.1",
+    "cpx": "^1.5.0",
+    "ncp": "^2.0.0",
     "sass": "~1.32.0",
     "sass-loader": "^10.0.0",
     "vue-cli-plugin-vuetify": "~2.4.2",

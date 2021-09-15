@@ -1,3 +1,9 @@
+RewriteEngine On
+RewriteBase /stfile/
+RewriteRule ^index\.html$ - [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /index.html [L]
 <FilesMatch "service-worker.js">
 	Header set Cache-Control "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0"
 	ExpiresDefault "now"
