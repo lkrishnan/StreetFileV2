@@ -40,7 +40,7 @@
     import TileLayer from "@arcgis/core/layers/TileLayer"
     import MapImageLayer from "@arcgis/core/layers/MapImageLayer"
     import Extent from "@arcgis/core/geometry/Extent"
-    import esriConfig from "@arcgis/core/config.js"
+    import esriConfig from "@arcgis/core/config"
     import axios from "axios"
     import JSONToURL from "../js/jsontourl"
     import GetAddrGraphics from "../js/getAddrGraphics"
