@@ -81,8 +81,9 @@ Vue.use( VueRouter )
 	],
 
 	router = new VueRouter( {  
-			routes
-			//mode: "history"
+			routes,
+			mode: "history",
+			base: "/stfile2/"
 		} );
 
 router.beforeEach( ( to, from, next ) => {

@@ -1,5 +1,5 @@
 module.exports = {
-	publicPath: process.env.NODE_ENV === "production" ? "" : "/",
+	publicPath: process.env.NODE_ENV === "production" ? "/stfile2/" : "/",
 	css: {
 	  sourceMap: true,
   },
@@ -114,7 +114,7 @@ module.exports = {
 	  workboxPluginMode: "InjectManifest",
 	  workboxOptions: {
 			swSrc: "service-worker.js",
-		  exclude: [ /\.htaccess$/, /web\.config$/ ]
+		  	exclude: [ /\.htaccess$/, /web\.config$/, /\.(?:scss)$/ ]
 	  },
 	  
 	}
