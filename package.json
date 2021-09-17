@@ -10,7 +10,7 @@
 		"copydev": "ncp ./dist //gispolarisdev1v/c$/inetpub/wwwroot/stfile --filter=[a-zA-Z].[a-zA-Z]",
 		"dev3": "powershell Remove-Item //gispolarisdev1v/c$/inetpub/wwwroot/stfile/* -Recurse -Force",
 		"prod": "powershell Remove-Item //gisags2v/c$/inetpub/wwwroot/stfile/* -Recurse -Force && powershell Copy-Item –Path dist/* –Destination //gisags2v/c$/inetpub/wwwroot/stfile -Recurse -Force",
-		"dev": "powershell Remove-Item //gispolarisdev1v/c$/inetpub/wwwroot/stfile/* -Recurse -Force && powershell Copy-Item –Path dist/* –Destination //gispolarisdev1v/c$/inetpub/wwwroot/stfile -Recurse -Force",
+		"dev": "powershell Remove-Item //gispolarisdev1v/c$/inetpub/wwwroot/stfile/* -Recurse -Force && powershell Copy-Item –Path dist/* –Destination //gispolarisdev1v/c$/inetpub/wwwroot/stfile -Recurse -Force -ToSession New-PSSession -ComputerName 'gispolarisdev1v' -Credential 'DSMECK\\a-krishl'",
 		"dev2": "powershell Remove-Item C://www/stf/* -Recurse -Force && powershell Copy-Item –Path dist/* –Destination C://www/stf -Recurse -Force",
 		"zipnodelete": "powershell Compress-Archive -Path dist/* -DestinationPath stfile_bundle.zip",
 		"zip": "powershell Remove-Item stfile_bundle.zip -Recurse -Force && powershell Compress-Archive -Path dist/* -DestinationPath stfile_bundle.zip",
