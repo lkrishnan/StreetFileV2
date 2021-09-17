@@ -81,8 +81,8 @@ Vue.use( VueRouter )
 	],
 
 	router = new VueRouter( {  
-			routes,
-			mode: "history"
+			routes
+			//mode: "history"
 		} );
 
 router.beforeEach( ( to, from, next ) => {

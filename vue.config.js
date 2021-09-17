@@ -1,5 +1,5 @@
 module.exports = {
-	publicPath: process.env.NODE_ENV === "production" ? "/stfile/" : "/",
+	publicPath: process.env.NODE_ENV === "production" ? "" : "/",
 	css: {
 	  sourceMap: true,
   },
