@@ -18,7 +18,7 @@
 		"publish": "npm run build && npm run zip && npm run copy"
 	},
 	"dependencies": {
-		"@arcgis/core": "^4.19.3",
+		"@arcgis/core": "^4.21.1",
 		"@mdi/font": "^5.9.55",
 		"axios": "^0.21.1",
 		"core-js": "^3.6.5",

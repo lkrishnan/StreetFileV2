@@ -35,7 +35,6 @@
 <script>
     import Map from "@arcgis/core/Map"
     import MapView from "@arcgis/core/views/MapView"
-    import FeatureLayer from "@arcgis/core/layers/FeatureLayer"
     import GraphicsLayer from "@arcgis/core/layers/GraphicsLayer"
     import TileLayer from "@arcgis/core/layers/TileLayer"
     import MapImageLayer from "@arcgis/core/layers/MapImageLayer"
@@ -45,9 +44,7 @@
     import JSONToURL from "../js/jsontourl"
     import GetAddrGraphics from "../js/getAddrGraphics"
     import GetRoadGraphics from "../js/getRoadGraphics"
-    import Graphic from "@arcgis/core/Graphic"
-    //import * as watchUtils from "@arcgis/core/core/watchUtils"
-
+    
     esriConfig.assetsPath = './assets'
 
     export default {
@@ -128,7 +125,7 @@
                     
                 _this.map = new Map( {
                     layers: [ _this.basemap, _this.addr_map_layer, _this.sel_layer ] 
-                
+                    
                 } )
 
                 _this.map_view = new MapView( {
