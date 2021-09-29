@@ -94,6 +94,8 @@ router.beforeEach( ( to, from, next ) => {
 			now = new Date( )
 
 		// compare the expiry time of the item with the current time
+		console.log( now.getTime( ) )
+		console.log( item.expiry )
 		if( now.getTime( ) > item.expiry ){
 			// If the item is expired, delete the item from storage
 			// and return null

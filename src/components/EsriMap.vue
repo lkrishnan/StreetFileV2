@@ -45,11 +45,11 @@
     import GetAddrGraphics from "../js/getAddrGraphics"
     import GetRoadGraphics from "../js/getRoadGraphics"
     
-    esriConfig.assetsPath = './assets'
-
     export default {
         name: "themap",
         mounted: function( ){
+            //set the assets path. very important for ESRI JSAPI to load controls properly
+            esriConfig.assetsPath = ( process.env.NODE_ENV == "development" ? "/assets" : "./assets" )
             this.initMap( )
 
         },
