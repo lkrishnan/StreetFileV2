@@ -83,7 +83,7 @@ Vue.use( VueRouter )
 	router = new VueRouter( {  
 			routes,
 			mode: "history",
-			base: "/stfile2/"
+			base: "/stfile/"
 		} );
 
 router.beforeEach( ( to, from, next ) => {
