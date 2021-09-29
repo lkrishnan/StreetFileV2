@@ -5,16 +5,12 @@
 	"scripts": {
 		"serve": "vue-cli-service serve",
 		"build": "vue-cli-service build --modern",
-		"copydev3": "cpx ./dist/** ../../test/stfile -u",
-		"copydev2": "copyfiles ./dist/**/*.* ../../test/stfile",
-		"copydev": "ncp ./dist //gispolarisdev1v/c$/inetpub/wwwroot/stfile --filter=[a-zA-Z].[a-zA-Z]",
-		"dev3": "powershell Remove-Item //gispolarisdev1v/c$/inetpub/wwwroot/stfile/* -Recurse -Force",
 		"prod": "powershell Remove-Item //gisags2v/c$/inetpub/wwwroot/stfile/* -Recurse -Force && powershell Copy-Item –Path dist/* –Destination //gisags2v/c$/inetpub/wwwroot/stfile -Recurse -Force",
 		"dev": "powershell Remove-Item //gispolarisdev1v/c$/inetpub/wwwroot/stfile/* -Recurse -Force && powershell Copy-Item –Path dist/* –Destination //gispolarisdev1v/c$/inetpub/wwwroot/stfile -Recurse -Force",
 		"dev2": "powershell Remove-Item //gisags2v/c$/inetpub/wwwroot/stfile2/* -Recurse -Force && powershell Copy-Item –Path dist/* –Destination //gisags2v/c$/inetpub/wwwroot/stfile2 -Recurse -Force",
 		"zipnodelete": "powershell Compress-Archive -Path dist/* -DestinationPath stfile_bundle.zip",
 		"zip": "powershell Remove-Item stfile_bundle.zip -Recurse -Force && powershell Compress-Archive -Path dist/* -DestinationPath stfile_bundle.zip",
-		"copy": "powershell Copy-Item –Path stfile_bundle.zip –Destination //gispolarisdev1v/c$/temp",
+		"copy": "powershell Copy-Item –Path stfile_bundle.zip –Destination //gisags2v/c$/temp",
 		"publish": "npm run build && npm run zip && npm run copy"
 	},
 	"dependencies": {
