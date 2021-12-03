@@ -13,7 +13,7 @@ export default async function infoByADMKey( admkey, aliaslegalflag ){
 		getParams = ( admkey, aliaslegalflag ) => {
 			return {
 				columns: "countystcode, lowerblock, upperblock",
-				filter: "admkey = '" + admkey + "' and aliaslegalflag = '" + aliaslegalflag + "'"
+				filter: "admkey = '" + admkey.replace( /'/g, "''" ) + "' and aliaslegalflag = '" + aliaslegalflag + "'"
 			  }
 		
 			},

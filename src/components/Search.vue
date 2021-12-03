@@ -160,7 +160,7 @@
 				const url = _this.ws.adm + "v1/query/streetfileall",
 					params = {
 							columns: "admkey, aliaslegalflag",
-							filter: "admkey like '" + v.toUpperCase( ) + "%'",
+							filter: "admkey like '" + v.toUpperCase( ).replace( /'/g, "''" ) + "%'",
 							group: "admkey, aliaslegalflag"
 						}
 
