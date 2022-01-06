@@ -181,7 +181,7 @@
 							search_results.push( { 
 								"text": element.admkey, 
 								"value": { 
-									"tag": ( element.aliaslegalflag ? "Legal" : "Alias" ), 
+									"tag": ( element.aliaslegalflag == 'L' ? "Legal" : "Alias" ), 
 									"admkey": element.admkey, 
 									"aliaslegalflag": element.aliaslegalflag 
 								}
