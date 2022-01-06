@@ -293,7 +293,7 @@
 									streettype: null,
 									addrnumsuf: null, 
 									aliaslegalflag: ( to.name === "Add_Legal" ? "L" : "A" ), 
-									staccess: "PUB", 
+									staccess: "PVT", 
 									addrnumbers: "B",
 									parcelsattached: "N", 
 									stcontinuous: "Y",

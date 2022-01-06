@@ -326,7 +326,7 @@
 							countystcode: _this.stcode,
 							citystcode: _this.stinfo.legal[ idx ].citystcode,
 							aliaslegalflag: "A",
-							staccess: "PUB", 
+							staccess: "PVT", 
 							addrnumbers: "B",
 							parcelsattached: "N", 
 							stcontinuous: "Y",

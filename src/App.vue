@@ -131,7 +131,7 @@
 							streettype: null,
 							addrnumsuf: null, 
 							aliaslegalflag: "L", 
-							staccess: "PUB", 
+							staccess: "PVT", 
 							addrnumbers: "B",
 							parcelsattached: "N", 
 							stcontinuous: "Y",
